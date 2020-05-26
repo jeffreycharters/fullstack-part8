@@ -51,6 +51,7 @@ const App = () => {
 
       <NewBook
         show={page === 'add'}
+        setPage={setPage}
       />
 
     </div>

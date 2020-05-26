@@ -157,9 +157,11 @@ const resolvers = {
       return book
     },
     editAuthor: (root, args) => {
-      const editedAuthor = authors.find(a => a.name === args.name)
+      let editedAuthor = authors.find(a => a.name === args.name)
       if (!editedAuthor) { return null }
-      return { ...editedAuthor, born: args.setBornTo }
+      editedAuthor = { ...editedAuthor, born: args.setBornTo }
+      authors = authors.map(a => a.name === editedAuthor.name ? editedAuthor : a)
+      return editedAuthor
     }
   }
 }

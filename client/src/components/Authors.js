@@ -1,5 +1,6 @@
 
 import React from 'react'
+import AuthorForm from './AuthorForm'
 
 const Authors = (props) => {
   if (!props.show) {
@@ -30,7 +31,9 @@ const Authors = (props) => {
           )}
         </tbody>
       </table>
-
+      <div>
+        <AuthorForm />
+      </div>
     </div>
   )
 }
