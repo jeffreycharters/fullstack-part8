@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "apollo-server": "^2.13.1",
-    "graphql": "^15.0.0"
+    "graphql": "^15.0.0",
+    "mongoose": "^5.9.16",
+    "mongoose-unique-validator": "^2.0.3"
   }
 }

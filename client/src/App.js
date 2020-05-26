@@ -30,6 +30,7 @@ const App = () => {
     setPage('books')
     getBooks()
   }
+  console.log(authorResult)
 
   return (
     <div>
