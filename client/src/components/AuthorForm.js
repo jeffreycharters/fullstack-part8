@@ -5,7 +5,7 @@ import { useMutation } from '@apollo/client'
 
 const AuthorForm = (props) => {
   const [year, setYear] = useState('')
-  const [author, setAuthor] = useState(props.authors[0])
+  const [author, setAuthor] = useState(props.authors[0].name)
 
   const [updateAuthor] = useMutation(UPDATE_AUTHOR, {
     refetchQueries: [{ query: ALL_AUTHORS }]
@@ -13,9 +13,7 @@ const AuthorForm = (props) => {
 
   const submit = async (event) => {
     event.preventDefault()
-
     updateAuthor({ variables: { name: author, born: Number(year) } })
-
     setYear('')
   }
 
