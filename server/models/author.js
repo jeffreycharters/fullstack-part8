@@ -9,6 +9,7 @@ const schema = new mongoose.Schema({
   },
   born: {
     type: Number,
+    max: 2020
   },
 })
 

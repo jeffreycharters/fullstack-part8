@@ -8,7 +8,10 @@ const AuthorForm = (props) => {
   const [author, setAuthor] = useState(props.authors[0].name)
 
   const [updateAuthor] = useMutation(UPDATE_AUTHOR, {
-    refetchQueries: [{ query: ALL_AUTHORS }]
+    refetchQueries: [{ query: ALL_AUTHORS }],
+    onError: (error) => {
+      props.setError(error.graphQLErrors[0].message)
+    }
   })
 
   const submit = async (event) => {

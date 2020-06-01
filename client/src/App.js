@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
+import Notification from './components/Notification'
 
 import { useQuery, useLazyQuery } from '@apollo/client'
 
@@ -13,7 +14,16 @@ const App = () => {
   const [getBooks, bookResult] = useLazyQuery(ALL_BOOKS)
   const [books, setBooks] = useState([])
 
+  const [error, setError] = useState(null)
+
   const authorResult = useQuery(ALL_AUTHORS)
+
+  const notify = (message) => {
+    setError(message)
+    setTimeout(() => {
+      setError(null)
+    }, 10000)
+  }
 
   useEffect(() => {
     if (bookResult.data) {
@@ -39,9 +49,12 @@ const App = () => {
         <button onClick={() => setPage('add')}>add book</button>
       </div>
 
+      <Notification error={error} />
+
       <Authors
         show={page === 'authors'}
         authors={authorResult.data.allAuthors}
+        setError={notify}
       />
 
       <Books
@@ -52,6 +65,7 @@ const App = () => {
       <NewBook
         show={page === 'add'}
         setPage={setPage}
+        setError={notify}
       />
 
     </div>
