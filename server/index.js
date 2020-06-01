@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const Author = require('./models/author')
 const Book = require('./models/book')
 const User = require('./models/user')
+const jwt = require('jsonwebtoken')
 
 mongoose.set('useFindAndModify', false)
 
@@ -62,6 +63,7 @@ type Mutation {
   ): Author
   createUser(
     username: String!
+    favouriteGenre: String!
   ): User
   login(
     username: String!

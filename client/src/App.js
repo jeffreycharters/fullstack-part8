@@ -3,8 +3,9 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import Notification from './components/Notification'
+import LoginForm from './components/LoginForm'
 
-import { useQuery, useLazyQuery } from '@apollo/client'
+import { useQuery, useLazyQuery, useApolloClient } from '@apollo/client'
 
 import { ALL_AUTHORS } from './queries'
 import { ALL_BOOKS } from './queries'
@@ -13,6 +14,7 @@ const App = () => {
   const [page, setPage] = useState('authors')
   const [getBooks, bookResult] = useLazyQuery(ALL_BOOKS)
   const [books, setBooks] = useState([])
+  const [token, setToken] = useState(null)
 
   const [error, setError] = useState(null)
 
@@ -31,6 +33,8 @@ const App = () => {
     }
   }, [bookResult])
 
+  const client = useApolloClient()
+
   if (authorResult.loading) {
     return <div>loading...</div>
   }
@@ -41,12 +45,20 @@ const App = () => {
     getBooks()
   }
 
+  const logout = () => {
+    setToken(null)
+    localStorage.clear()
+    client.resetStore()
+  }
+
   return (
     <div>
       <div>
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={handleBookClick}>books</button>
-        <button onClick={() => setPage('add')}>add book</button>
+        {token && <button onClick={() => setPage('add')}>add book</button>}
+        {!token && <button onClick={() => setPage('login')}>log in</button>}
+        {token && <button onClick={logout}>log out</button>}
       </div>
 
       <Notification error={error} />
@@ -66,6 +78,12 @@ const App = () => {
         show={page === 'add'}
         setPage={setPage}
         setError={notify}
+      />
+
+      <LoginForm
+        show={page === 'login'}
+        setError={notify}
+        setToken={setToken}
       />
 
     </div>

@@ -6,6 +6,7 @@ import { useMutation } from '@apollo/client'
 const AuthorForm = (props) => {
   const [year, setYear] = useState('')
   const [author, setAuthor] = useState(props.authors[0].name)
+  const token = localStorage.getItem('books-user-token')
 
   const [updateAuthor] = useMutation(UPDATE_AUTHOR, {
     refetchQueries: [{ query: ALL_AUTHORS }],
@@ -13,6 +14,10 @@ const AuthorForm = (props) => {
       props.setError(error.graphQLErrors[0].message)
     }
   })
+
+  if (!token) {
+    return null
+  }
 
   const submit = async (event) => {
     event.preventDefault()
