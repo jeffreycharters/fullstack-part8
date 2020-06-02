@@ -15,11 +15,18 @@ const Books = (props) => {
     if (b.genres) {
       return b.genres.forEach(genre => allGenres.add(genre))
     }
+    return null
   })
   allGenres = [...allGenres]
 
   if (filter) {
     filteredBooks = books.filter(b => b.genres.includes(filter))
+  }
+
+  const genreClickHandler = (event) => {
+    event.preventDefault()
+    setFilter(event.target.textContent)
+    props.getBooks()
   }
 
   return (
@@ -50,7 +57,7 @@ const Books = (props) => {
       </table>
       <div>
         {allGenres.map(genre =>
-          <button key={genre} onClick={({ target }) => setFilter(target.textContent)}>{genre}</button>
+          <button key={genre} onClick={genreClickHandler}>{genre}</button>
         )}
         <button key='allGenres' onClick={() => setFilter('')}>All Genres</button>
       </div>

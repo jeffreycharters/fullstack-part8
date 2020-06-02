@@ -4,18 +4,22 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
+import Recommended from './components/Recommended'
 
 import { useQuery, useLazyQuery, useApolloClient } from '@apollo/client'
 
 import { ALL_AUTHORS } from './queries'
 import { ALL_BOOKS } from './queries'
+import { CURRENT_USER } from './queries'
 
 const App = () => {
   const [page, setPage] = useState('authors')
   const [getBooks, bookResult] = useLazyQuery(ALL_BOOKS)
+  const [getCurrentUser, currentUserResult] = useLazyQuery(CURRENT_USER)
   const [books, setBooks] = useState([])
   const [token, setToken] = useState(null)
 
+  const [user, setUser] = useState({ username: null, favouriteGenre: ' ' })
   const [error, setError] = useState(null)
 
   const authorResult = useQuery(ALL_AUTHORS)
@@ -33,6 +37,12 @@ const App = () => {
     }
   }, [bookResult])
 
+  useEffect(() => {
+    if (currentUserResult.data) {
+      setUser(currentUserResult.data.me)
+    }
+  }, [currentUserResult])
+
   const client = useApolloClient()
 
   if (authorResult.loading) {
@@ -43,6 +53,12 @@ const App = () => {
     event.preventDefault()
     setPage('books')
     getBooks()
+  }
+
+  const handleRecommendedClick = (event) => {
+    event.preventDefault()
+    setPage('recommended')
+    getCurrentUser()
   }
 
   const logout = () => {
@@ -57,6 +73,7 @@ const App = () => {
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={handleBookClick}>books</button>
         {token && <button onClick={() => setPage('add')}>add book</button>}
+        {token && <button onClick={handleRecommendedClick}>recommended</button>}
         {!token && <button onClick={() => setPage('login')}>log in</button>}
         {token && <button onClick={logout}>log out</button>}
       </div>
@@ -72,6 +89,7 @@ const App = () => {
       <Books
         show={page === 'books'}
         books={books}
+        getBooks={getBooks}
       />
 
       <NewBook
@@ -84,6 +102,12 @@ const App = () => {
         show={page === 'login'}
         setError={notify}
         setToken={setToken}
+        setPage={setPage}
+      />
+
+      <Recommended
+        show={page === 'recommended'}
+        user={user}
       />
 
     </div>

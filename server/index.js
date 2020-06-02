@@ -82,7 +82,8 @@ const resolvers = {
         return Book.find({ author: findAuthor._id })
       }
       if (args.genre && !args.author) {
-        const booksWithGenre = await Book.find({ genre: { $in: args.genre } })
+        // const booksWithGenre = await Book.find({ genre: { $in: args.genre } })
+        const booksWithGenre = await Book.find({ genres: args.genre }).populate('author')
         return booksWithGenre
       }
       if (args.genre && args.author) {
@@ -101,7 +102,6 @@ const resolvers = {
   },
   Author: {
     bookCount: (root) => {
-      // return books.filter(b => b.author === root.name).length
       return Book.find({ author: root._id }).countDocuments()
     }
   },
