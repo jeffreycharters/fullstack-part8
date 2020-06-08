@@ -31,9 +31,25 @@ const App = () => {
     }, 10000)
   }
 
+
+  const updateCacheWith = (addedBook) => {
+    const includedIn = (set, object) =>
+      set.map(p => p.id).includes(object.id)
+
+    const dataInStore = client.readQuery({ query: ALL_BOOKS })
+    if (!includedIn(dataInStore.allBooks, addedBook)) {
+      client.writeQuery({
+        query: ALL_BOOKS,
+        data: { allPersons: dataInStore.allBooks.concat(addedBook) }
+      })
+    }
+  }
+
   useSubscription(BOOK_ADDED, {
     onSubscriptionData: ({ subscriptionData }) => {
-      window.alert(`${subscriptionData.data.bookAdded.title} added`)
+      const addedBook = subscriptionData.data.bookAdded
+      notify(`${addedBook.title} added`)
+      updateCacheWith(addedBook)
     }
   })
 
@@ -110,6 +126,7 @@ const App = () => {
         show={page === 'add'}
         setPage={setPage}
         setError={notify}
+        updateCacheWith={updateCacheWith}
       />
 
       <LoginForm
