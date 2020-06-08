@@ -6,10 +6,10 @@ import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import Recommended from './components/Recommended'
 
-import { useQuery, useLazyQuery, useApolloClient } from '@apollo/client'
+import { useQuery, useLazyQuery, useApolloClient, useSubscription } from '@apollo/client'
 
 import { ALL_AUTHORS } from './queries'
-import { ALL_BOOKS } from './queries'
+import { ALL_BOOKS, BOOK_ADDED } from './queries'
 import { CURRENT_USER } from './queries'
 
 const App = () => {
@@ -30,6 +30,12 @@ const App = () => {
       setError(null)
     }, 10000)
   }
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      window.alert(`${subscriptionData.data.bookAdded.title} added`)
+    }
+  })
 
 
   useEffect(() => {
