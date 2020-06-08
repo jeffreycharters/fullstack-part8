@@ -31,6 +31,14 @@ const App = () => {
     }, 10000)
   }
 
+
+  useEffect(() => {
+    const token = localStorage.getItem('books-user-token')
+    if (token) {
+      setToken(token)
+    }
+  }, [])
+
   useEffect(() => {
     if (bookResult.data) {
       setBooks(bookResult.data.allBooks)
