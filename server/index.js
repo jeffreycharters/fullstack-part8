@@ -6,12 +6,23 @@ const Book = require('./models/book')
 const User = require('./models/user')
 const jwt = require('jsonwebtoken')
 
+const DataLoader = require('dataloader')
+
 mongoose.set('useFindAndModify', false)
 
 const JWT_SECRET = 'BLAHBLAHBLAHBLAHBLAH'
 const MONGODB_URI = 'mongodb+srv://fullstack:superboogers@cluster0-hkxnt.mongodb.net/graphql-part8?retryWrites=true'
 
 const pubsub = new PubSub()
+
+const bookCounter = async (keys, Book) => {
+  const books = await Book.find({
+    author: {
+      $in: keys
+    }
+  })
+  return keys.map(key => books.filter(book => String(book.author) === String(key)).length)
+}
 
 console.log('connecting to', MONGODB_URI)
 
@@ -108,8 +119,9 @@ const resolvers = {
     }
   },
   Author: {
-    bookCount: (root) => {
-      return Book.find({ author: root._id }).countDocuments()
+    bookCount: async (root, args, { loaders }) => {
+      //console.log(args)
+      return await loaders.countBooks.load(root._id)
     }
   },
   Mutation: {
@@ -197,8 +209,14 @@ const server = new ApolloServer({
         auth.substring(7), JWT_SECRET
       )
       const currentUser = await User.findById(decodedToken.id)
-      return { currentUser }
+      return {
+        currentUser,
+        loaders: {
+          countBooks: new DataLoader(keys => bookCounter(keys, Book))
+        }
+      }
     }
+
   }
 })
 
